@@ -1,0 +1,18 @@
+[project]
+name = "chat"
+version = "0.1.0"
+description = "chat with robots using your EDITOR"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "anthropic>=0.52.1",
+    "mdformat>=0.7.22",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
