@@ -6,3 +6,4 @@
 
 - Loop back automatically when the editor is exited.
 
+- Added initialization functionality for the buffer.

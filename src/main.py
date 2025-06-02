@@ -6,6 +6,7 @@ import sys
 from buffer_builder import build_buffer
 from buffer_parser import parse_buffer
 import claude
+from message import Message
 from text_collector import PrintingTextCollector
 
 
@@ -35,8 +36,13 @@ def main():
     buffer_path = sys.argv[1]
     client = claude.client()
 
-    with open(buffer_path, "r") as buffer_file:
-        messages = parse_buffer(buffer_file)
+    try:
+        with open(buffer_path, "r") as buffer_file:
+            messages = parse_buffer(buffer_file)
+    except FileNotFoundError:
+        messages = [Message(None, "user", None)]
+        with open(buffer_path, "w") as buffer_file:
+            build_buffer(buffer_file, messages)
 
     build_buffer(sys.stdout, messages[:-1])
 
