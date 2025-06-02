@@ -26,9 +26,22 @@ def count_lines(path: str) -> int:
     """
     line_count = 0
     with open(path, "r") as buffer_file:
-        for line in buffer_file:
+        for _ in buffer_file:
             line_count += 1
     return line_count
+
+
+def read_or_create_buffer(buffer_path: str) -> list[Message]:
+    try:
+        with open(buffer_path, "r") as buffer_file:
+            messages = parse_buffer(buffer_file)
+
+    except FileNotFoundError:
+        messages = [Message(None, "user", None)]
+        with open(buffer_path, "w") as buffer_file:
+            build_buffer(buffer_file, messages)
+
+    return messages
 
 
 def main():
@@ -36,13 +49,7 @@ def main():
     buffer_path = sys.argv[1]
     client = claude.client()
 
-    try:
-        with open(buffer_path, "r") as buffer_file:
-            messages = parse_buffer(buffer_file)
-    except FileNotFoundError:
-        messages = [Message(None, "user", None)]
-        with open(buffer_path, "w") as buffer_file:
-            build_buffer(buffer_file, messages)
+    messages = read_or_create_buffer(buffer_path)
 
     build_buffer(sys.stdout, messages[:-1])
 
@@ -66,8 +73,8 @@ def main():
         messages.append(new_message)
 
         with open(buffer_path, "w") as buffer_file:
+            messages.append(Message(None, "user", None))
             build_buffer(buffer_file, messages)
-            buffer_file.write("====\nRole: user\n\n\n")
 
 
 if __name__ == "__main__":
